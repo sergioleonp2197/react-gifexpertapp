@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+# GifExpertApp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aplicacion web hecha con React que permite buscar GIFs por categoria usando la API de Giphy.
 
-## Available Scripts
+La app inicia mostrando una categoria por defecto (`Rick and Morty`) y permite agregar nuevas busquedas desde un formulario. Cada categoria se renderiza como una seccion independiente con sus primeros 10 resultados.
 
-In the project directory, you can run:
+## Que hace el proyecto
 
-### `npm start`
+- Permite escribir una categoria o termino de busqueda.
+- Consulta la API de Giphy con ese termino.
+- Muestra una grilla de GIFs con imagen y titulo.
+- Mantiene varias categorias en pantalla al mismo tiempo.
+- Muestra un estado de carga mientras llegan los resultados.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Como funciona
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+El flujo principal de la aplicacion es este:
 
-### `npm test`
+1. `GifExpertApp` mantiene en estado la lista de categorias.
+2. `AddCategory` captura lo que escribe el usuario en el input.
+3. Al enviar el formulario, si el texto tiene mas de 2 caracteres, la categoria se agrega al inicio de la lista.
+4. Por cada categoria, se renderiza un componente `GifGrid`.
+5. `GifGrid` usa el hook `useFetchGifs(category)` para pedir los datos.
+6. El hook llama a `getGifs`, que hace una peticion `fetch` a Giphy.
+7. La respuesta se transforma a un arreglo simple con `id`, `title` y `url`.
+8. Finalmente, `GifGridItem` pinta cada tarjeta con la imagen del GIF y su titulo.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Estructura principal
 
-### `npm run build`
+```text
+src/
+|-- GifExpertApp.js          # Componente principal
+|-- index.js                # Punto de entrada de React
+|-- index.css               # Estilos globales
+|-- components/
+|   |-- AddCategory.js      # Formulario para agregar categorias
+|   |-- GifGrid.js          # Grilla por categoria
+|   |-- GifGridItem.js      # Tarjeta individual de GIF
+|-- hooks/
+|   |-- useFetchGifs.js     # Hook para cargar GIFs
+|-- helpers/
+|   |-- getGifs.js          # Llamada a la API de Giphy
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Ademas, la carpeta `docs/` contiene una compilacion estatica lista para publicarse.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Tecnologias usadas
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- React 17
+- Create React App
+- Fetch API
+- Giphy API
+- Animate.css
 
-### `npm run eject`
+## Instalacion y ejecucion
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. Instala las dependencias:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. Inicia el proyecto en desarrollo:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```bash
+npm start
+```
 
-## Learn More
+3. Abre en el navegador:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```text
+http://localhost:3000
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Ejemplo de uso
 
-### Code Splitting
+Supongamos que escribes `Dragon Ball` en el input y presionas Enter.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+La aplicacion hara lo siguiente:
 
-### Analyzing the Bundle Size
+1. Agregara `Dragon Ball` como nueva categoria.
+2. Mostrara el texto `Loading` mientras consulta la API.
+3. Pedira a Giphy los primeros 10 GIFs relacionados.
+4. Dibujara una nueva grilla con las imagenes y titulos encontrados.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Ejemplo del tipo de datos que maneja internamente despues de consultar la API:
 
-### Making a Progressive Web App
+```js
+[
+  {
+    id: "abc123",
+    title: "Dragon Ball GIF",
+    url: "https://media.giphy.com/..."
+  },
+  {
+    id: "def456",
+    title: "Goku GIF",
+    url: "https://media.giphy.com/..."
+  }
+]
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Comportamiento actual a tener en cuenta
 
-### Advanced Configuration
+- La categoria inicial es `Rick and Morty`.
+- Solo se agregan busquedas con mas de 2 caracteres.
+- Las categorias nuevas se insertan al inicio.
+- Cada categoria hace su propia consulta a la API.
+- El proyecto no incluye pruebas automatizadas implementadas, aunque la configuracion base de testing si esta creada.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Scripts disponibles
 
-### Deployment
+- `npm start`: levanta la app en desarrollo.
+- `npm run build`: genera la version de produccion.
+- `npm test`: abre el entorno de pruebas de React.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Resumen
 
-### `npm run build` fails to minify
+Este proyecto es una aplicacion pequena pero clara para entender conceptos base de React:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- estado con `useState`
+- efectos con `useEffect`
+- hooks personalizados
+- separacion por componentes
+- consumo de APIs externas
+
+Sirve muy bien como ejemplo de practica para aprender flujo de datos, renderizado por listas y consumo de servicios HTTP en React.
